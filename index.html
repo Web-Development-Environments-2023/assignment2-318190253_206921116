@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<!-- Fig. 14.26: cannon.html -->
+<!-- Cannon Game HTML5 document. -->
+<html>
+   <head>
+      <meta charset = "utf-8">
+      <title>Spaceship Game</title>
+      <link rel="stylesheet" type="text/css" href="spaceship.css" />
+      <script src = "spaceship.js"></script>
+   </head>
+   <body>
+   <div id="menu">
+        <a href="#" onclick="showPage('register')">Register</a>|
+        <a href="#" onclick="showPage('login')">Login</a> |
+        <a href="#" onclick="showPage('about')">About</a>
+    </div>
+   
+
+    <div id="welcome">
+        <h1>Welcome to our SpaceShip game!</h1>
+        <h3>Liel Caspi and Shira Sorek</h3>
+        <button onclick="showPage('login')">Login</button>
+        <button onclick="showPage('register')">Register</button>
+    </div>
+
+    <div id="login" style="display:none">
+        <h2>Login To Play!</h2>
+
+        <label for="reg_username">Username:</label>
+        <input type="text" id="reg_username" required>
+        <br><br>
+
+        <label for="reg_password">Password:</label>
+        <input type="password" id="reg_password" required>
+        <br><br>
+
+        <button onclick="loginGame()">Login To Game</button>  
+    </div>
+    
+    <div id="register" style="display:none">
+        <h2>We Are So Glad You Decided To Join!</h2>
+
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <br><br>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br><br>
+
+        <label for="confirm-password">Confirm Password:</label>
+        <input type="password" id="confirm-password" name="confirm-password" required>
+        <br><br>
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <br><br>
+
+        <label for="last-name">Last Name:</label>
+        <input type="text" id="last-name" name="last-name" required>
+        <br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <br><br>
+
+        <label for="birthdate">Birthdate:</label>
+        <input type="date" id="birthdate" name="birthdate">            
+        <br><br>
+        <button onclick="checkValidation()">Submit</button> 
+    </div>
+
+    <!-- The Modal -->
+    <div id="about" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>Some text in the Modal..</p>
+    </div>
+    </div>
+
+      <!-- <audio id = "blockerSound" preload = "auto">
+         <source src = "blocker_hit.ogg" type = "audio/ogg"></audio>
+      <audio id = "targetSound" preload = "auto">
+         <source src = "target_hit.ogg" type = "audio/ogg"></audio>
+      <audio id = "cannonSound" preload = "auto">
+         <source src = "cannon_fire.ogg" type = "audio/ogg"></audio>
+      <canvas id = "theCanvas" width = "480" height = "600"></canvas> 
+      <p><input id = "startButton" type = "button" value = "Start Game">
+      </p> -->
+   </body>
+</html>
