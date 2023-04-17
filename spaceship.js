@@ -3,7 +3,7 @@ var users={
 }
 
 function showPage(pageId) {
-    var pages = ['login', 'register', 'about','welcome'];
+    var pages = ['login', 'register','welcome', 'game'];
     for (var i = 0; i < pages.length; i++) {
         var page = document.getElementById(pages[i]);
         if (pages[i] === pageId) {
@@ -18,7 +18,7 @@ function showPage(pageId) {
 function about(){
 // Get the modal
 var modal = document.getElementById("about");
-
+modal.style.display = 'block';
 // Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
 
@@ -84,15 +84,13 @@ function checkValidation()
         }
 
         users[document.getElementById("username").value] = document.getElementById("password").value;
-    //   document.getElementById("register").style.display = "none";
-    //   document.getElementById("welcome").style.display = "block";
+
     showPage('welcome')
 }
 
 function loginGame(){
     username=document.getElementById("reg_username").value
     password=document.getElementById("reg_password").value
-
     if (!(username in users)) {
         alert("The username you entered dosent exist.");
         return; 
@@ -101,9 +99,5 @@ function loginGame(){
         alert("Password is not correct.");
         return;   
     }
-        
-    // document.getElementById("login").style.display = "none";
-    // document.getElementById("welcome").style.display = "block";
-    showPage('welcome')
+    showPage('game')
 }
-
