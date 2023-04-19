@@ -138,6 +138,12 @@ var lineWidth; // width of the target and blocker
 var hitStates; // is each target piece hit?
 var badSpacePiecesHit; // number of target pieces hit (out of 7)
 
+var circleRadius;
+var circleSpacingX ;
+var circleSpacingY ;
+
+var goodShoot;
+
 // // variables for the cannon and cannonball
 // var goodShoot; // cannonball image's upper-left corner
 // var cannonballVelocity; // cannonball's velocity
@@ -195,6 +201,7 @@ function setupGame()
 function startTimer()
 {
    window.addEventListener( "keydown", keydownHandler, false );
+   canvas.addEventListener( "click", fireGoodshot, false );
    intervalTimer = window.setInterval( updatePositions, TIME_INTERVAL );
 } // end function startTimer
 
@@ -202,6 +209,7 @@ function startTimer()
 function stopTimer()
 {
    window.removeEventListener( "keydown", keydownHandler, false );
+   canvas.removeEventListener( "click", fireGoodshot, false );
    window.clearInterval( intervalTimer );
 } // end function stopTimer
 
@@ -215,8 +223,8 @@ function resetElements()
    canvasWidth = w; // store the width
    canvasHeight = h; // store the height
 
-   ShotRadius = w / 36; // Shot radius 1/36 canvas width
-   ShotSpeed = w * 3 / 2; // Shot speed multiplier
+   shotRadius = w / 36; // Shot radius 1/36 canvas width
+   shotSpeed = w * 3 / 2; // Shot speed multiplier
 
    lineWidth = w / 24; 
 
@@ -241,6 +249,11 @@ function resetElements()
    badSpace.start.y = badSpaceBeginning;
    badSpace.end.x = w - badSpaceDistance;
    badSpace.end.y = badSpaceEnd;
+
+    // Calculate the dimensions of each circle and the spacing between them
+    circleRadius = pieceLength *1.5;
+    circleSpacingX = (badSpace.end.x - badSpace.start.x - circleRadius) / 4.5;
+    circleSpacingY = (badSpace.end.y - badSpace.start.y - 3 * circleRadius) / 4;
    
 } // end function resetElements
 
@@ -283,71 +296,44 @@ function updatePositions()
    if (badSpace.start.x < 0 || badSpace.end.x > canvasWidth)
         badSpaceVelocity *= -1;
 
+   if (goodShotOnScreen) // if there is currently a shot fired
+   {
+      // update cannonball position
+      var interval = TIME_INTERVAL / 1000.0;
 
-//    if (cannonballOnScreen) // if there is currently a shot fired
-//    {
-//       // update cannonball position
-//       var interval = TIME_INTERVAL / 1000.0;
+      //goodShot.x -= interval * shotSpeed;
+      goodShot.y -= interval * shotSpeed;
 
-//       cannonball.x += interval * cannonballVelocityX;
-//       cannonball.y += interval * cannonballVelocityY;
+    //   // check for cannonball collision with target
+    //   if (shotSpeed > 0 && 
+    //     goodShot.x + shotRadius >= targetDistance &&
+    //     goodShot.x + shotRadius <= targetDistance + lineWidth &&
+    //     goodShot.y - shotRadius > target.start.y &&
+    //     goodShot.y + shotRadius < target.end.y)
+    //   {
+    //      // determine target section number (0 is the top)
+    //      var section = 
+    //         Math.floor((cannonball.y  - target.start.y) / pieceLength);
 
-//       // check for collision with blocker
-//       if ( cannonballVelocityX > 0 && 
-//          cannonball.x + cannonballRadius >= blockerDistance &&
-//          cannonball.x + cannonballRadius <= blockerDistance + lineWidth &&
-//          cannonball.y - cannonballRadius > blocker.start.y &&
-//          cannonball.y + cannonballRadius < blocker.end.y)
-//       {
-//          blockerSound.play(); // play blocker hit sound
-//          cannonballVelocityX *= -1; // reverse cannonball's direction
-//          timeLeft -= MISS_PENALTY; // penalize the user
-//       } // end if
+    //      // check whether the piece hasn't been hit yet
+    //      if ((section >= 0 && section < TARGET_PIECES) && 
+    //         !hitStates[section])
+    //      {
+    //         targetSound.play(); // play target hit sound
+    //         hitStates[section] = true; // section was hit
+    //         cannonballOnScreen = false; // remove cannonball
+    //         timeLeft += HIT_REWARD; // add reward to remaining time
 
-//       // check for collisions with left and right walls
-//       else if (cannonball.x + cannonballRadius > canvasWidth || 
-//          cannonball.x - cannonballRadius < 0)
-//       {
-//          cannonballOnScreen = false; // remove cannonball from screen
-//       } // end else if
-
-//       // check for collisions with top and bottom walls
-//       else if (cannonball.y + cannonballRadius > canvasHeight || 
-//          cannonball.y - cannonballRadius < 0)
-//       {
-//          cannonballOnScreen = false; // make the cannonball disappear
-//       } // end else if
-
-//       // check for cannonball collision with target
-//       else if (cannonballVelocityX > 0 && 
-//          cannonball.x + cannonballRadius >= targetDistance &&
-//          cannonball.x + cannonballRadius <= targetDistance + lineWidth &&
-//          cannonball.y - cannonballRadius > target.start.y &&
-//          cannonball.y + cannonballRadius < target.end.y)
-//       {
-//          // determine target section number (0 is the top)
-//          var section = 
-//             Math.floor((cannonball.y  - target.start.y) / pieceLength);
-
-//          // check whether the piece hasn't been hit yet
-//          if ((section >= 0 && section < TARGET_PIECES) && 
-//             !hitStates[section])
-//          {
-//             targetSound.play(); // play target hit sound
-//             hitStates[section] = true; // section was hit
-//             cannonballOnScreen = false; // remove cannonball
-//             timeLeft += HIT_REWARD; // add reward to remaining time
-
-//             // if all pieces have been hit
-//             if (++targetPiecesHit == TARGET_PIECES)
-//             {
-//                stopTimer(); // game over so stop the interval timer
-//                draw(); // draw the game pieces one final time
-//                showGameOverDialog("You Won!"); // show winning dialog
-//             } // end if
-//          } // end if
-//       } // end else if
-//    } // end if
+    //         // if all pieces have been hit
+    //         if (++targetPiecesHit == TARGET_PIECES)
+    //         {
+    //            stopTimer(); // game over so stop the interval timer
+    //            draw(); // draw the game pieces one final time
+    //            showGameOverDialog("You Won!"); // show winning dialog
+    //         } // end if
+    //      } // end if
+    //   } // end else if
+   } // end if
 
    ++timerCount; // increment the timer event counter
 
@@ -380,16 +366,15 @@ function draw()
    context.textBaseline = "top";
    context.fillText("Time remaining: " + timeLeft, 5, 5);
 
-//    // if a cannonball is currently on the screen, draw it
-//    if (cannonballOnScreen)
-//    { 
-//       context.fillStyle = "gray";
-//       context.beginPath();
-//       context.arc(cannonball.x, cannonball.y, cannonballRadius, 
-//          0, Math.PI * 2);
-//       context.closePath();
-//       context.fill();
-//    } // end if
+   // if a cannonball is currently on the screen, draw it
+   if (goodShotOnScreen)
+   { 
+      context.fillStyle = "gray";
+      context.beginPath();
+      context.arc(goodShot.x, goodShot.y, shotRadius, 0, Math.PI * 2);
+      context.closePath();
+      context.fill();
+   } // end if
 
     // context.beginPath();
     // context.moveTo(badSpace.start.x, badSpace.start.y);
@@ -420,11 +405,6 @@ function draw()
     context.lineWidth = 5;
     context.strokeStyle = 'white';
     context.stroke()
-
-    // Calculate the dimensions of each circle and the spacing between them
-    const circleRadius = pieceLength *1.5;
-    const circleSpacingX = (badSpace.end.x - badSpace.start.x - circleRadius) / 4.5;
-    const circleSpacingY = (badSpace.end.y - badSpace.start.y - 3 * circleRadius) / 4;
 
     // Loop through each row and column and draw a circle
     for (let row = 0; row < 4; row++) {
@@ -505,4 +485,18 @@ function keydownHandler(event) {
           }
           break;
       }
+  }
+
+  
+  function fireGoodshot(event){
+    if (goodShotOnScreen) // if a cannonball is already on the screen
+        return; // do nothing
+
+    goodShot.y = goodSpace.end.y + shotRadius; // align x-coordinate 
+    goodShot.x = goodSpace.start.x + (goodSpace.end.x - goodSpace.start.x)/2; // centers ball vertically
+
+    goodShotOnScreen = true; // the cannonball is on the screen
+    ++shotsFired; // increment shotsFired
+    // play cannon fired sound
+    //cannonSound.play();
   }
