@@ -14,11 +14,11 @@
         <a href="#" onclick="about()">About</a>
     </div>
    
-
     <div id="welcome">
         <h1>Welcome to our SpaceShip game!</h1>
         <h3>Liel Caspi and Shira Sorek</h3>
-        <button onclick="showPage('login')">Login</button>
+        <!-- <button onclick="showPage('login')">Login</button> -->
+        <button onclick="showPage('game')">Login</button>
         <button onclick="showPage('register')">Register</button>
     </div>
 
@@ -33,7 +33,8 @@
         <input type="password" id="reg_password" required>
         <br><br>
 
-        <button onclick="loginGame()">Login To Game</button>  
+        <!-- <button onclick="loginGame()">Login To Game</button>   -->
+        <p><input id = "login" type = "button" value = "Login To Game" onclick="loginGame()">
     </div>
     
     <div id="register" style="display:none">
@@ -78,9 +79,16 @@
     </div>
     </div>
 
-    <div id="game" style="display:none">
-        <canvas id = "theCanvas" width = "480" height = "600"></canvas> 
-      <input id = "startButton" type = "button" value = "Start Game">
+    
+  <style>
+    #theCanvas {
+        border: 2px solid black;
+    }
+  </style>
+
+    <div id="game" style="display:none" >
+        <canvas id = "theCanvas" width = "600" height = "600"></canvas> 
+        <p><input id = "startButton" type = "button" value = "Start Game">
     </div>
 
    </body>
