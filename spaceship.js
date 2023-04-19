@@ -113,6 +113,7 @@ var TIME_INTERVAL = 15; // screen refresh interval in milliseconds
 
 // variables for the game loop and tracking statistics
 var intervalTimer; // holds interval timer
+var intervalTimerBadShots;
 var timerCount; // number of times the timer fired since the last second
 var timeLeft; // the amount of time left in seconds
 var shotsFired; // the number of shots the user has fired
@@ -188,7 +189,10 @@ function setupGame()
    
    goodShot = new Object();
    badShot1 = new Object();
+   badShot1.free=true;
    badShot2 = new Object();
+   badShot2.free=true;
+
 
    // initialize hitStates as an array
    hitStates = new Array(TARGET_PIECES);
@@ -205,6 +209,9 @@ function startTimer()
     window.addEventListener("keydown", keydownHandler, false );
     window.addEventListener("keydown", fireGoodshot, false);
     intervalTimer = window.setInterval( updatePositions, TIME_INTERVAL );
+    intervalTimerBadShots = window.setInterval( fireBadShot, TIME_INTERVAL );
+
+
 } // end function startTimer
 
 // terminate interval timer
@@ -213,6 +220,7 @@ function stopTimer()
    window.removeEventListener("keydown", keydownHandler, false );
    window.removeEventListener("keydown", fireGoodshot, false );
    window.clearInterval( intervalTimer );
+   window.clearInterval( intervalTimerBadShots );
 } // end function stopTimer
 
 
@@ -227,6 +235,7 @@ function resetElements()
 
    shotRadius = w / 36; // Shot radius 1/36 canvas width
    shotSpeed = w * 3 / 2; // Shot speed multiplier
+   badShotSpeed = shotSpeed/3;
 
    lineWidth = w / 24; 
 
@@ -276,8 +285,8 @@ function newGame()
    timeLeft = 10; // start the countdown at 10 seconds
    timerCount = 0; // the timer has fired 0 times so far
    goodShotOnScreen = false; // the goodShoot is not on the screen
-   badShot1OnScreen = false; // the badShoot1 is not on the screen
-   badShot2OnScreen = false; // the badShoot2 is not on the screen
+   badShot1.free = true; // the badShoot1 is not on the screen
+   badShot2.free = true; // the badShoot2 is not on the screen
    strikes = 0; // set the initial number of strikes 
    timeElapsed = 0; // set the time elapsed to zero
    score=0
@@ -289,6 +298,28 @@ function newGame()
 // called every TIME_INTERVAL milliseconds
 function updatePositions()
 {
+    //if bad shots exist and need to progress
+    if (!badShot1.free){
+        if (badShot1.y > canvas.height){
+            badShot1.free=true;
+        }
+        // update position
+        var interval = TIME_INTERVAL / 1000.0;
+        badShot1.y += interval * badShotSpeed;
+
+    }
+
+    if (!badShot2.free){
+        // update position
+        if (badShot2.y > canvas.height){
+            badShot2.free=true;
+        }
+        var interval = TIME_INTERVAL / 1000.0;
+        badShot2.y += interval * badShotSpeed;
+        console.log(badShot2.y)
+
+        }
+    
    // update the badSpace's position
    var badSpaceUpdate = TIME_INTERVAL / 1000.0 * badSpaceVelocity;
    badSpace.start.x += badSpaceUpdate;
@@ -300,7 +331,6 @@ function updatePositions()
 
    if (goodShotOnScreen) // if there is currently a shot fired
    {
-        console.log(goodShot.y)
 
       // update cannonball position
       var interval = TIME_INTERVAL / 1000.0;
@@ -311,6 +341,14 @@ function updatePositions()
       if (goodShot.y < 0){
         goodShotOnScreen=false;
     }
+
+
+    // check bad shots out of range
+
+
+
+
+
 
     //   // check for cannonball collision with target
     //   if (shotSpeed > 0 && 
@@ -384,6 +422,22 @@ function draw()
       context.fill();
    } // end if
 
+   if (!badShot1.free){
+    context.fillStyle = "yellow";
+    context.beginPath();
+    context.arc(badShot1.x, badShot1.y, shotRadius, 0, Math.PI * 2);
+    context.closePath();
+    context.fill();
+   }
+
+   if (!badShot2.free){
+    context.fillStyle = "yellow";
+    context.beginPath();
+    context.arc(badShot2.x, badShot2.y, shotRadius, 0, Math.PI * 2);
+    context.closePath();
+    context.fill();
+   }
+
     // context.beginPath();
     // context.moveTo(badSpace.start.x, badSpace.start.y);
     // context.lineTo(badSpace.end.x, badSpace.start.y);
@@ -428,6 +482,9 @@ function draw()
             context.fill();
     }
     }
+
+
+
 
 
 
@@ -515,4 +572,32 @@ function keydownHandler(event) {
         }
       }, false);
      }
+}
+
+function fireBadShot(){
+    function randnum(maxLimit){
+        let rand = Math.random() * maxLimit;      
+        rand = Math.floor(rand); 
+      
+        return rand;
+      }
+
+    let res = randnum(101);
+    if (res==91){
+        console.log("interval")
+        if (badShot1.free==true || badShot2.free==true){
+            let col = randnum(5);
+            let row = randnum(4);
+            if (badShot1.free==true){
+            badShot1.x = badSpace.start.x + circleRadius + col * (circleRadius  + circleSpacingX);
+            badShot1.y = badSpace.start.y + circleRadius + row * (circleRadius  + circleSpacingY);
+            badShot1.free=false;
+            }
+            else{
+            badShot2.x = badSpace.start.x + circleRadius + col * (circleRadius  + circleSpacingX);
+            badShot2.y = badSpace.start.y + circleRadius + row * (circleRadius  + circleSpacingY);
+            badShot2.free=false;
+            }
+    }
+    }
 }
