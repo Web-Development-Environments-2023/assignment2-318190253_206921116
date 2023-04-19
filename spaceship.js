@@ -144,6 +144,8 @@ var circleSpacingY ;
 
 var goodShoot;
 
+var keypressed;
+
 // // variables for the cannon and cannonball
 // var goodShoot; // cannonball image's upper-left corner
 // var cannonballVelocity; // cannonball's velocity
@@ -200,16 +202,16 @@ function setupGame()
 // set up interval timer to update game
 function startTimer()
 {
-   window.addEventListener( "keydown", keydownHandler, false );
-   canvas.addEventListener( "click", fireGoodshot, false );
-   intervalTimer = window.setInterval( updatePositions, TIME_INTERVAL );
+    window.addEventListener("keydown", keydownHandler, false );
+    window.addEventListener("keydown", fireGoodshot, false);
+    intervalTimer = window.setInterval( updatePositions, TIME_INTERVAL );
 } // end function startTimer
 
 // terminate interval timer
 function stopTimer()
 {
-   window.removeEventListener( "keydown", keydownHandler, false );
-   canvas.removeEventListener( "click", fireGoodshot, false );
+   window.removeEventListener("keydown", keydownHandler, false );
+   window.removeEventListener("keydown", fireGoodshot, false );
    window.clearInterval( intervalTimer );
 } // end function stopTimer
 
@@ -298,11 +300,17 @@ function updatePositions()
 
    if (goodShotOnScreen) // if there is currently a shot fired
    {
+        console.log(goodShot.y)
+
       // update cannonball position
       var interval = TIME_INTERVAL / 1000.0;
-
+        
       //goodShot.x -= interval * shotSpeed;
       goodShot.y -= interval * shotSpeed;
+      
+      if (goodShot.y < 0){
+        goodShotOnScreen=false;
+    }
 
     //   // check for cannonball collision with target
     //   if (shotSpeed > 0 && 
@@ -489,14 +497,22 @@ function keydownHandler(event) {
 
   
   function fireGoodshot(event){
-    if (goodShotOnScreen) // if a cannonball is already on the screen
-        return; // do nothing
+    if(event.keyCode ==  32){
+        if (goodShotOnScreen) // if a cannonball is already on the screen
+            return; // do nothing
 
-    goodShot.y = goodSpace.end.y + shotRadius; // align x-coordinate 
-    goodShot.x = goodSpace.start.x + (goodSpace.end.x - goodSpace.start.x)/2; // centers ball vertically
+        goodShot.y = goodSpace.end.y + shotRadius; // align x-coordinate 
+        goodShot.x = goodSpace.start.x + (goodSpace.end.x - goodSpace.start.x)/2; // centers ball vertically
 
-    goodShotOnScreen = true; // the cannonball is on the screen
-    ++shotsFired; // increment shotsFired
-    // play cannon fired sound
-    //cannonSound.play();
-  }
+        goodShotOnScreen = true; // the cannonball is on the screen
+        ++shotsFired; // increment shotsFired
+        // play cannon fired sound
+        //cannonSound.play();
+        
+        window.addEventListener("keyup", function(event) {
+            if (event.keyCode == 32) { // spacebar released
+          event.preventDefault(); // prevent default action
+        }
+      }, false);
+     }
+}
