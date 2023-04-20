@@ -151,9 +151,10 @@ var canvas; // the canvas
 var context; // used for drawing on the canvas
 
 var TARGET_PIECES = 20; // sections in the target
-var MISS_PENALTY = 2; // seconds deducted on a miss
-var HIT_REWARD = 3; // seconds added on a hit
+//var MISS_PENALTY = 2; // seconds deducted on a miss
+//var HIT_REWARD = 3; // seconds added on a hit
 var TIME_INTERVAL = 15; // screen refresh interval in milliseconds
+var life = 3;
 
 // variables for the game loop and tracking statistics
 var intervalTimer; // holds interval timer
@@ -226,8 +227,10 @@ function setupGame()
    goodShot = new Object();
    badShot1 = new Object();
    badShot1.free=true;
+   badShot1.hit = false;
    badShot2 = new Object();
    badShot2.free=true;
+   badShot2.hit = false;
 
 
    // initialize hitStates as an array
@@ -284,6 +287,7 @@ function stopTimer()
 // relative to the size of the canvas before the game begins
 function resetElements()
 {
+   life = 3;
    var w = canvas.width;
    var h = canvas.height;
    canvasWidth = w; // store the width
@@ -321,6 +325,10 @@ function resetElements()
   circleRadius = pieceLength *1.5;
   circleSpacingX = (badSpace.end.x - badSpace.start.x - circleRadius) / 4.5;
   circleSpacingY = (badSpace.end.y - badSpace.start.y - 3 * circleRadius) / 4;
+
+  badShot1.hit = false;
+  badShot2.hit = false;
+
   
 } // end function resetElements
 
@@ -349,11 +357,26 @@ function newGame()
    strikes = 0; // set the initial number of strikes 
    timeElapsed = 0; // set the time elapsed to zero
    score=0
+   life = 3;
 
    startTimer(); // starts the game loop
 } // end function newGame
 
-
+function gotostartpoint(){
+    var w = canvas.width;
+    var h = canvas.height;
+    canvasWidth = w; // store the width
+    canvasHeight = h; // store the height
+    // configure instance variables related to the goodSpace
+ 
+    goodSpaceDistance = w *4/ 10; // 1/4 canvas width from left
+    goodSpaceBeginning = h * 19 / 20; // distance from bottom 1/4 canvas height
+    goodSpaceEnd = h * 7 / 8; // distance from bottom 1/8 canvas height
+    goodSpace.start.x = goodSpaceDistance;
+    goodSpace.start.y = goodSpaceBeginning;
+    goodSpace.end.x = w - goodSpaceDistance;
+    goodSpace.end.y = goodSpaceBeginning;
+}
 // called every TIME_INTERVAL milliseconds
 function updatePositions()
 {
@@ -417,14 +440,43 @@ function updatePositions()
       }
       }
 
-    // if (badSpacePiecesHit == 20)
-    //         {
-    //            stopTimer(); // game over so stop the interval timer
-    //            draw(); // draw the game pieces one final time
-    //            showGameOverDialog("You Won!"); // show winning dialog
-    //         }
+
+    if (badSpacePiecesHit == 20)
+            {
+               stopTimer(); // game over so stop the interval timer
+               draw(); // draw the game pieces one final time
+               showGameOverDialog("You Won!"); // show winning dialog
+            }
 
    } // end if
+
+    // check for hit by badshot1 & 2
+    if (!badShot1.free && goodSpace.start.x <= badShot1.x && badShot1.x <= goodSpace.end.x){
+        if (!badShot1.free && !badShot1.hit &&badShot1.y>= goodSpace.start.y){
+            life--;
+            badShot1.hit = true;
+            console.log("life is:")
+            console.log(life)
+            gotostartpoint();
+        }
+    }
+
+    if (!badShot2.free && goodSpace.start.x <= badShot2.x && badShot2.x <= goodSpace.end.x){
+        if (!badShot2.free && !badShot2.hit && badShot2.y>= goodSpace.start.y){
+            life--;
+            badShot2.hit = true;
+            console.log("life is:")
+            console.log(life)
+            gotostartpoint();
+        }
+    }
+
+
+   if (life==0){
+    stopTimer(); // game over so stop the interval timer
+    draw(); // draw the game pieces one final time
+    showGameOverDialog("You Lost!"); // show winning dialog
+   }
 
    ++timerCount; // increment the timer event counter
 
@@ -465,6 +517,12 @@ function draw()
     context.font = "bold 24px serif";
     context.textBaseline = "top";
     context.fillText("Score: " + score, 250, 5);
+
+    // display life
+    context.fillStyle = "black";
+    context.font = "bold 24px serif";
+    context.textBaseline = "top";
+    context.fillText("lives: " + life, 350, 5);
 
    // if a cannonball is currently on the screen, draw it
    if (goodShotOnScreen)
@@ -602,19 +660,30 @@ function fireBadShot(){
       }
 
     let res = randnum(101);
-    if (res==91){
+    if (res>95){
         if (badShot1.free==true || badShot2.free==true){
             let col = randnum(5);
             let row = randnum(4);
+            if (hitStates[row][col]){
+                return;
+            }
+            //if (!badShot1.free && badShot1)
             if (badShot1.free==true){
+                if (!badShot2.free && badShot2.y <= canvas.height*0.75){
+                    return;
+                }
             badShot1.x = badSpace.start.x + circleRadius + col * (circleRadius  + circleSpacingX);
             badShot1.y = badSpace.start.y + circleRadius + row * (circleRadius  + circleSpacingY);
             badShot1.free=false;
+            badShot1.hit = false;
             }
             else{
-            badShot2.x = badSpace.start.x + circleRadius + col * (circleRadius  + circleSpacingX);
-            badShot2.y = badSpace.start.y + circleRadius + row * (circleRadius  + circleSpacingY);
-            badShot2.free=false;
+                if (badShot1.y > canvas.height*0.75){
+                    badShot2.x = badSpace.start.x + circleRadius + col * (circleRadius  + circleSpacingX);
+                    badShot2.y = badSpace.start.y + circleRadius + row * (circleRadius  + circleSpacingY);
+                    badShot2.free=false;
+                    badShot2.hit = false;
+                }
             }
     }
     }
@@ -625,3 +694,9 @@ function addscore(row){
   const rowScore = rowScores[row]; // get the score value for the given row
   score += rowScore; // add the row score to the overall score
 }
+
+function showGameOverDialog(message)
+{
+   alert(message + "\nShots fired: " + shotsFired + 
+      "\nTotal time: " + timeElapsed + " seconds ");
+} // end function showGameOverDialog
