@@ -147,6 +147,9 @@ var goodShoot;
 
 var keypressed;
 
+var circlesX;
+var circlesY;
+
 // // variables for the cannon and cannonball
 // var goodShoot; // cannonball image's upper-left corner
 // var cannonballVelocity; // cannonball's velocity
@@ -195,7 +198,14 @@ function setupGame()
 
 
    // initialize hitStates as an array
-   hitStates = new Array(TARGET_PIECES);
+   hitStates = new Array();
+   circlesX = new Array();
+   circlesY = new Array();
+
+   for (let i = 0; i < 4; i++) {
+    hitStates[i] = new Array();
+  }
+
 
    // get sounds
 //    targetSound = document.getElementById( "targetSound" );
@@ -233,7 +243,7 @@ function resetElements()
    canvasWidth = w; // store the width
    canvasHeight = h; // store the height
 
-   shotRadius = w / 36; // Shot radius 1/36 canvas width
+   shotRadius = w / 50; // Shot radius 1/36 canvas width
    shotSpeed = w * 3 / 2; // Shot speed multiplier
    badShotSpeed = shotSpeed/3;
 
@@ -261,11 +271,11 @@ function resetElements()
    badSpace.end.x = w - badSpaceDistance;
    badSpace.end.y = badSpaceEnd;
 
-    // Calculate the dimensions of each circle and the spacing between them
-    circleRadius = pieceLength *1.5;
-    circleSpacingX = (badSpace.end.x - badSpace.start.x - circleRadius) / 4.5;
-    circleSpacingY = (badSpace.end.y - badSpace.start.y - 3 * circleRadius) / 4;
-   
+  // Calculate the dimensions of each circle and the spacing between them
+  circleRadius = pieceLength *1.5;
+  circleSpacingX = (badSpace.end.x - badSpace.start.x - circleRadius) / 4.5;
+  circleSpacingY = (badSpace.end.y - badSpace.start.y - 3 * circleRadius) / 4;
+  
 } // end function resetElements
 
 
@@ -277,8 +287,11 @@ function newGame()
    stopTimer(); // terminate previous interval timer
 
     // set every element of hitStates to false--restores target pieces
-    for (var i = 0; i < TARGET_PIECES; ++i)
-        hitStates[i] = false; // target piece not destroyed
+    for (var i = 0; i < 4; ++i){
+      for (var j = 0; j < 5; ++j){
+        hitStates[i][j] = false; // circle piece not destroyed
+      }
+    }
     
    badSpacePiecesHit = 0; // no badSpace pieces have been hit
    badSpaceVelocity = initialbadSpacVelocity; // set initial velocity
@@ -298,6 +311,7 @@ function newGame()
 // called every TIME_INTERVAL milliseconds
 function updatePositions()
 {
+  
     //if bad shots exist and need to progress
     if (!badShot1.free){
         if (badShot1.y > canvas.height){
@@ -316,7 +330,6 @@ function updatePositions()
         }
         var interval = TIME_INTERVAL / 1000.0;
         badShot2.y += interval * badShotSpeed;
-        console.log(badShot2.y)
 
         }
     
@@ -325,7 +338,7 @@ function updatePositions()
    badSpace.start.x += badSpaceUpdate;
    badSpace.end.x += badSpaceUpdate;
 
-   // if the badSpace hit the top or bottom, reverse direction
+   // if the badSpace hit the left or right, reverse direction
    if (badSpace.start.x < 0 || badSpace.end.x > canvasWidth)
         badSpaceVelocity *= -1;
 
@@ -337,17 +350,27 @@ function updatePositions()
         
       //goodShot.x -= interval * shotSpeed;
       goodShot.y -= interval * shotSpeed;
-      
+
       if (goodShot.y < 0){
         goodShotOnScreen=false;
     }
-
-
-    // check bad shots out of range
-
-
-
-
+    
+    if (goodShot.x >= circlesX[4])
+      {console.log("hitttttttttttttt")}
+    // check for collision with badspace 
+    for (let row = 0; row < 4; row++) {
+      if (goodShot.y+shotRadius <= circlesY[row]+circleRadius && goodShot.y+shotRadius >= circlesY[row]-circleRadius ){
+        //console.log("hitttttttttttttt")
+        for (let col = 0; col < 5; col++) {
+          if (goodShot.x <= circlesX[col]+circleRadius && goodShot.x >= circlesX[col]-circleRadius ){
+            //console.log("hitttttttttttttt")
+            if (!hitStates[row][col]){
+              //console.log("hitttttttttttttt")
+              hitStates[row][col]=true}
+            }
+        }
+      }
+      }
 
 
     //   // check for cannonball collision with target
@@ -423,7 +446,7 @@ function draw()
    } // end if
 
    if (!badShot1.free){
-    context.fillStyle = "yellow";
+    context.fillStyle = "black";
     context.beginPath();
     context.arc(badShot1.x, badShot1.y, shotRadius, 0, Math.PI * 2);
     context.closePath();
@@ -431,7 +454,7 @@ function draw()
    }
 
    if (!badShot2.free){
-    context.fillStyle = "yellow";
+    context.fillStyle = "black";
     context.beginPath();
     context.arc(badShot2.x, badShot2.y, shotRadius, 0, Math.PI * 2);
     context.closePath();
@@ -467,22 +490,34 @@ function draw()
     context.lineWidth = 5;
     context.strokeStyle = 'white';
     context.stroke()
-
-    // Loop through each row and column and draw a circle
+    
     for (let row = 0; row < 4; row++) {
-        for (let col = 0; col < 5; col++) {
-            // Calculate the center of the current circle
-            const centerX = badSpace.start.x + circleRadius + col * (circleRadius  + circleSpacingX);
-            const centerY = badSpace.start.y + circleRadius + row * (circleRadius  + circleSpacingY);
-
-            // Draw the circle
-            context.beginPath();
-            context.arc(centerX, centerY, circleRadius, 0, 2 * Math.PI);
-            context.fillStyle = 'red';
-            context.fill();
+      for (let col = 0; col < 5; col++) {
+        if (hitStates[row][col]) {
+          continue;
+        }
+    
+        // Calculate the center of the current circle
+        const centerX = badSpace.start.x + circleRadius + col * (circleRadius  + circleSpacingX);
+        const centerY = badSpace.start.y + circleRadius + row * (circleRadius  + circleSpacingY);
+    
+        // Draw the circle
+        context.beginPath();
+        context.arc(centerX, centerY, circleRadius, 0, 2 * Math.PI);
+        context.fillStyle = 'red';
+        context.fill();
+    
+        // Push the X and Y values into their respective arrays
+        if (row == 0) {
+          circlesX[col]=centerX;
+        }
+        if (col == 0) {
+          circlesY[row]=centerY;
+        }
+      }
     }
-    }
 
+    
 
 
 
@@ -584,7 +619,6 @@ function fireBadShot(){
 
     let res = randnum(101);
     if (res==91){
-        console.log("interval")
         if (badShot1.free==true || badShot2.free==true){
             let col = randnum(5);
             let row = randnum(4);
