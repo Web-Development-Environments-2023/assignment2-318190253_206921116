@@ -17,8 +17,7 @@
     <div id="welcome">
         <h1>Welcome to our SpaceShip game!</h1>
         <h3>Liel Caspi and Shira Sorek</h3>
-        <!-- <button onclick="showPage('login')">Login</button> -->
-        <button onclick="showPage('game')">Login</button>
+        <button onclick="showPage('login')">Login</button>
         <button onclick="showPage('register')">Register</button>
     </div>
 
@@ -79,7 +78,16 @@
     </div>
     </div>
 
-    
+    <div id="configuration" style="display:none" >
+        <h1>This Is The Configuration Page</h1>
+        <h3>You can choose how you want to play!</h3>
+        <p id="message">First, press a key that you would like to fire with ! </p>
+        <label for="minutes" style="display:none" >Now, enter the amount of minutes you would like to play:</label>
+        <input style="display:none" type="text" id="minutes" name="minutes" required>
+        <br>
+        <button style="display:none" id="start" onclick="doneConf()">Let's start</button> 
+    </div>
+
   <style>
     #theCanvas {
         border: 2px solid black;

@@ -1,11 +1,15 @@
 var users={
     "p": "p",
-}
+};
+
+var page;
 
 function showPage(pageId) {
-    var pages = ['login', 'register','welcome', 'game'];
+    var pages = ['login', 'register','welcome', 'game', 'configuration'];
     for (var i = 0; i < pages.length; i++) {
-        var page = document.getElementById(pages[i]);
+        page = document.getElementById(pages[i]);
+        if (pageId=='configuration'){
+          document.addEventListener("keydown", Message ,false);}
         if (pages[i] === pageId) {
             page.style.display = 'block';
         } else {
@@ -99,8 +103,48 @@ function loginGame(){
         alert("Password is not correct.");
         return;   
     }
-    showPage('game')
+    showPage('configuration')
+
 }
+
+
+
+var chosenShootingKey;
+var chosenTime;
+
+function Message(event) {
+  if (event.keyCode == 32 || // space bar
+    (event.keyCode >= 65 && event.keyCode <= 90)) { // letters A-Z
+      // update the shooting key variable
+      chosenShootingKey = event.keyCode;
+      message = document.getElementById("message");
+      if (message) {
+        message.style.display = "none";
+        const label = document.querySelector('label[for="minutes"]');
+        const input = document.getElementById('minutes');
+        const start = document.getElementById('start');
+        label.style.display = 'block';
+        input.style.display = 'block';
+        start.style.display = 'block';
+      }
+      document.removeEventListener("keydown", Message, false);
+  } else {
+    alert("Please choose a key that is either the space bar or one of the letters");
+    return; 
+  }
+}
+
+function doneConf() {
+  chosenTime = document.getElementById('minutes').value;
+  if (chosenTime<2){
+    alert("The minimum is 2 minuets");
+  }
+  else{
+    showPage('game')
+  }
+}
+
+
 
 // ------------------------------------- code from cannon -------------------------------------------------------------------------------
 var canvas; // the canvas
@@ -134,6 +178,8 @@ var badSpaceEnd; // target bottom's distance from top
 var pieceLength; // length of a target piece
 var initialbadSpaceVelocity; // initial target speed multiplier
 var badSpaceVelocity; // target speed multiplier during game
+var circlesX; //contain the x cooardinate for the circles
+var circlesY; //contain the y cooardinate for the circles
 
 var lineWidth; // width of the target and blocker
 var hitStates; // is each target piece hit?
@@ -145,22 +191,9 @@ var circleSpacingY ;
 
 var goodShoot;
 
-var keypressed;
+var score;
 
-var circlesX;
-var circlesY;
 
-// // variables for the cannon and cannonball
-// var goodShoot; // cannonball image's upper-left corner
-// var cannonballVelocity; // cannonball's velocity
-// var cannonballOnScreen; // is the cannonball on the screen
-// var cannonballRadius; // cannonball radius
-// var cannonballSpeed; // cannonball speed
-// var cannonBaseRadius; // cannon base radius
-// var cannonLength; // cannon barrel length
-// var barrelEnd; // the end point of the cannon's barrel
-// var canvasWidth; // width of the canvas
-// var canvasHeight; // height of the canvas
 
 // // variables for sounds
 // var targetSound;
@@ -220,6 +253,19 @@ function startTimer()
     window.addEventListener("keydown", fireGoodshot, false);
     intervalTimer = window.setInterval( updatePositions, TIME_INTERVAL );
     intervalTimerBadShots = window.setInterval( fireBadShot, TIME_INTERVAL );
+
+    document.addEventListener("keydown", function(event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+      }
+    });
+
+    window.addEventListener("keyup", function(event) {
+      if (event.keyCode == 32) { // spacebar released
+    event.preventDefault(); // prevent default action
+  }
+    }, false);
+
 
 
 } // end function startTimer
@@ -295,7 +341,7 @@ function newGame()
     
    badSpacePiecesHit = 0; // no badSpace pieces have been hit
    badSpaceVelocity = initialbadSpacVelocity; // set initial velocity
-   timeLeft = 10; // start the countdown at 10 seconds
+   timeLeft = chosenTime*60 ; // start the countdown at 10 seconds
    timerCount = 0; // the timer has fired 0 times so far
    goodShotOnScreen = false; // the goodShoot is not on the screen
    badShot1.free = true; // the badShoot1 is not on the screen
@@ -355,53 +401,29 @@ function updatePositions()
         goodShotOnScreen=false;
     }
     
-    if (goodShot.x >= circlesX[4])
-      {console.log("hitttttttttttttt")}
     // check for collision with badspace 
     for (let row = 0; row < 4; row++) {
       if (goodShot.y+shotRadius <= circlesY[row]+circleRadius && goodShot.y+shotRadius >= circlesY[row]-circleRadius ){
-        //console.log("hitttttttttttttt")
         for (let col = 0; col < 5; col++) {
           if (goodShot.x <= circlesX[col]+circleRadius && goodShot.x >= circlesX[col]-circleRadius ){
-            //console.log("hitttttttttttttt")
             if (!hitStates[row][col]){
-              //console.log("hitttttttttttttt")
-              hitStates[row][col]=true}
+              hitStates[row][col]=true
+              goodShotOnScreen=false;
+              badSpacePiecesHit++;
+              addscore(row);
+            }
             }
         }
       }
       }
 
-
-    //   // check for cannonball collision with target
-    //   if (shotSpeed > 0 && 
-    //     goodShot.x + shotRadius >= targetDistance &&
-    //     goodShot.x + shotRadius <= targetDistance + lineWidth &&
-    //     goodShot.y - shotRadius > target.start.y &&
-    //     goodShot.y + shotRadius < target.end.y)
-    //   {
-    //      // determine target section number (0 is the top)
-    //      var section = 
-    //         Math.floor((cannonball.y  - target.start.y) / pieceLength);
-
-    //      // check whether the piece hasn't been hit yet
-    //      if ((section >= 0 && section < TARGET_PIECES) && 
-    //         !hitStates[section])
-    //      {
-    //         targetSound.play(); // play target hit sound
-    //         hitStates[section] = true; // section was hit
-    //         cannonballOnScreen = false; // remove cannonball
-    //         timeLeft += HIT_REWARD; // add reward to remaining time
-
-    //         // if all pieces have been hit
-    //         if (++targetPiecesHit == TARGET_PIECES)
+    // if (badSpacePiecesHit == 20)
     //         {
     //            stopTimer(); // game over so stop the interval timer
     //            draw(); // draw the game pieces one final time
     //            showGameOverDialog("You Won!"); // show winning dialog
-    //         } // end if
-    //      } // end if
-    //   } // end else if
+    //         }
+
    } // end if
 
    ++timerCount; // increment the timer event counter
@@ -433,7 +455,16 @@ function draw()
    context.fillStyle = "black";
    context.font = "bold 24px serif";
    context.textBaseline = "top";
-   context.fillText("Time remaining: " + timeLeft, 5, 5);
+   let minutes = Math.floor(timeLeft / 60);
+    let seconds = timeLeft % 60;
+    let timeString = minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
+    context.fillText("Time remaining: " + timeString, 5, 5);
+
+    // display th score
+    context.fillStyle = "black";
+    context.font = "bold 24px serif";
+    context.textBaseline = "top";
+    context.fillText("Score: " + score, 250, 5);
 
    // if a cannonball is currently on the screen, draw it
    if (goodShotOnScreen)
@@ -461,16 +492,6 @@ function draw()
     context.fill();
    }
 
-    // context.beginPath();
-    // context.moveTo(badSpace.start.x, badSpace.start.y);
-    // context.lineTo(badSpace.end.x, badSpace.start.y);
-    // context.lineTo(badSpace.end.x, badSpace.end.y);
-    // context.lineTo(badSpace.start.x, badSpace.end.y);
-    // context.closePath();
-    // context.lineWidth = 5;
-    // context.strokeStyle = 'green';
-    // context.stroke()
-
    // draw the goodspace
    context.beginPath(); // begin a new path
    context.moveTo(goodSpace.start.x, goodSpace.start.y); // path origin
@@ -488,10 +509,12 @@ function draw()
     context.lineTo(badSpace.start.x, badSpace.end.y);
     context.closePath();
     context.lineWidth = 5;
-    context.strokeStyle = 'white';
+    context.strokeStyle = 'rgba(255, 255, 255, 0.5)';
     context.stroke()
     
+    const colors = ['red', 'green', 'blue', 'yellow'];
     for (let row = 0; row < 4; row++) {
+      const color = colors[row];
       for (let col = 0; col < 5; col++) {
         if (hitStates[row][col]) {
           continue;
@@ -504,7 +527,7 @@ function draw()
         // Draw the circle
         context.beginPath();
         context.arc(centerX, centerY, circleRadius, 0, 2 * Math.PI);
-        context.fillStyle = 'red';
+        context.fillStyle = color;
         context.fill();
     
         // Push the X and Y values into their respective arrays
@@ -516,41 +539,7 @@ function draw()
         }
       }
     }
-
     
-
-
-
-
-
-   // initialize currentPoint to the starting point of the badspace
-    // var currentPoint = new Object();
-    // currentPoint.x = badSpace.start.x;
-    // currentPoint.y = badSpace.start.y; 
-
-    // // draw the badspace
-    // for (var i = 0; i < TARGET_PIECES; ++i)
-    // {
-    //     // if this target piece is not hit, draw it
-    //     if (!hitStates[i])
-    //     {
-    //         context.beginPath(); // begin a new path for target
-
-    //         // alternate coloring the pieces yellow and blue
-    //         if (i % 2 === 0){
-    //             context.strokeStyle = "yellow";}
-    //         else
-    //             context.strokeStyle = "blue";
-
-    //         context.moveTo(currentPoint.x, currentPoint.y); // path origin
-    //         context.lineTo(currentPoint.x, currentPoint.y + pieceLength); 
-    //         context.lineWidth = lineWidth; // line width
-    //         context.stroke(); // draw path
-    //     } // end if
-        
-    //     // move currentPoint to the start of the next piece
-    //     currentPoint.y += pieceLength;
-    // } // end for
 } // end function draw
 
 function keydownHandler(event) {
@@ -589,7 +578,7 @@ function keydownHandler(event) {
 
   
   function fireGoodshot(event){
-    if(event.keyCode ==  32){
+    if(event.keyCode ==  chosenShootingKey){
         if (goodShotOnScreen) // if a cannonball is already on the screen
             return; // do nothing
 
@@ -600,12 +589,7 @@ function keydownHandler(event) {
         ++shotsFired; // increment shotsFired
         // play cannon fired sound
         //cannonSound.play();
-        
-        window.addEventListener("keyup", function(event) {
-            if (event.keyCode == 32) { // spacebar released
-          event.preventDefault(); // prevent default action
-        }
-      }, false);
+
      }
 }
 
@@ -634,4 +618,10 @@ function fireBadShot(){
             }
     }
     }
+}
+
+function addscore(row){
+  const rowScores = [20, 15, 10, 5]; 
+  const rowScore = rowScores[row]; // get the score value for the given row
+  score += rowScore; // add the row score to the overall score
 }
