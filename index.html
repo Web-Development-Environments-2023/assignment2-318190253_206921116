@@ -8,6 +8,20 @@
       <script src = "spaceship.js"></script>
    </head>
    <body>
+      <header>
+         <div>
+            <img src="https://raw.githubusercontent.com/Web-Development-Environments-2023/assignment2-318190253_206921116/main/logo.jpeg" alt="Description of the image">
+            <h1>Spaceship Game</h1>
+         </div>
+      </header>
+
+      <h2>Welcome to Spaceship Game!</h2>
+      <p>Use the arrow keys to move your spaceship and shoot the aliens.</p>
+
+      <audio id = "targetSound" preload = "auto">
+         <source src = "target_hit.ogg" type = "audio/ogg"></audio>
+      <audio id = "cannonSound" preload = "auto">
+         <source src = "fireSound.ogg" type = "audio/ogg"></audio>
       <audio id = "targetSound" preload = "auto">
          <source src = "target_hit.ogg" type = "audio/ogg"></audio>
       <audio id = "cannonSound" preload = "auto">
@@ -78,7 +92,7 @@
     <!-- Modal content -->
     <div class="modal-content">
         <span class="close">&times;</span>
-        <p>we need to add here some info ! dont forget</p>
+        <p>Shira Sorek & Liel Caspi. We encountered a few diffuclties in the assignment. When creating the elements to represent the bad spaceships, we debated wether to create 20 individual elements or one the contiand all the others. We decided to create one, so the the movements as a group would be easier to implement. Another challange was the detection of collisions - between a shot from the good spaceship to the bad ones, and from the bad ones towards the good spceships.</p>
     </div>
     </div>
 
@@ -102,6 +116,8 @@
         <canvas id = "theCanvas" width = "600" height = "600"></canvas> 
         <p><input id = "startButton" type = "button" value = "Start Game">
     </div>
-
+   <footer>
+      <p>This is the footer.</p>
+   </footer>
    </body>
 </html>
