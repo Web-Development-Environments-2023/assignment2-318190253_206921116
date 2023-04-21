@@ -40,7 +40,8 @@ window.onclick = function(event) {
 }
   
 function isPassValid(pass) {
-    var regex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+    //var regex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+    var regex = /^(?=.*[a-zA-Z])(?=.*\d).+$/;
     return regex.test(pass);
 }
 
@@ -62,6 +63,11 @@ function arePassSame(pass1,pass2) {
 
 function checkValidation()
 {
+    if (document.getElementById("name").value == "" || document.getElementById("last-name").value == "" || document.getElementById("email").value == "" || document.getElementById("password").value == ""){
+        alert("Please fill all fields.");
+        return;
+    }
+
     if (!areNamesValid(document.getElementById("name").value)) {
         alert("Please enter a valid name.");
         return;
@@ -78,7 +84,7 @@ function checkValidation()
         }
 
         if (!isPassValid(document.getElementById("password").value)) {
-        alert("Please enter a valid password with at least 8 characters and a combination of letters and digits.");
+        alert("Please enter a valid password with at least 1 letter character and at least 1 digit character.");
         return;
         }
 
@@ -89,12 +95,27 @@ function checkValidation()
 
         users[document.getElementById("username").value] = document.getElementById("password").value;
 
+
+
     showPage('welcome')
+    document.getElementById("username").value="";
+    document.getElementById("name").value="";
+    document.getElementById("last-name").value="";
+    document.getElementById("email").value="";
+    document.getElementById("password").value="";
+    document.getElementById("confirm-password").value="";
+    document.getElementById("birthdate").value="";
+
+
+
+
 }
 
 function loginGame(){
     username=document.getElementById("reg_username").value
+    document.getElementById("reg_username").value = "";
     password=document.getElementById("reg_password").value
+    document.getElementById("reg_password").value = "";
     if (!(username in users)) {
         alert("The username you entered dosent exist.");
         return; 

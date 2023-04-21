@@ -37,3 +37,25 @@
     cursor: pointer;
   }
 
+  .header-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .header-container img {
+    height: 75px;
+    margin-right: 10px;
+  }
+
+  header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px; /* set the height of the header */
+  }
+  footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+ }
