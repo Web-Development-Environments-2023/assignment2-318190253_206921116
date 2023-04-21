@@ -159,6 +159,7 @@ var life = 3;
 // variables for the game loop and tracking statistics
 var intervalTimer; // holds interval timer
 var intervalTimerBadShots;
+var intervalBadSpaceSpeed; // interval timer for bad space ships speed
 var timerCount; // number of times the timer fired since the last second
 var timeLeft; // the amount of time left in seconds
 var shotsFired; // the number of shots the user has fired
@@ -193,6 +194,10 @@ var circleSpacingY ;
 var goodShoot;
 
 var score;
+var speedUpRound = 0;
+
+var targetSound;
+var cannonSound;
 
 
 
@@ -215,6 +220,16 @@ function setupGame()
    // start a new game when user clicks Start Game button
    document.getElementById( "startButton" ).addEventListener( 
       "click", newGame, false );
+
+    // const backgroundImage = new Image();
+    // backgroundImage.src = 'https://raw.githubusercontent.com/Web-Development-Environments-2023/assignment2-318190253_206921116/main/backround.jpeg';
+    // console.log("show back")
+    // //backgroundImage.src = 'https://github.com/Web-Development-Environments-2023/assignment2-318190253_206921116/blob/main/backround.jpeg';
+
+    // backgroundImage.onload = function() {
+    //     context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+    //   };
+      
 
    // JavaScript Object representing game items
    goodSpace = new Object(); // object representing good SpaceShip
@@ -244,18 +259,28 @@ function setupGame()
 
 
    // get sounds
-//    targetSound = document.getElementById( "targetSound" );
-//    cannonSound = document.getElementById( "cannonSound" );
+    targetSound = document.getElementById( "targetSound" );
+    cannonSound = document.getElementById( "cannonSound" );
 //    blockerSound = document.getElementById( "blockerSound" );
 } // end function setupGame
 
 // set up interval timer to update game
 function startTimer()
 {
+    // const backgroundImage = new Image();
+    // backgroundImage.src = 'https://raw.githubusercontent.com/Web-Development-Environments-2023/assignment2-318190253_206921116/main/backround.jpeg';
+    // //console.log("show back")
+    // //backgroundImage.src = 'https://github.com/Web-Development-Environments-2023/assignment2-318190253_206921116/blob/main/backround.jpeg';
+
+    // backgroundImage.onload = function() {
+    //     context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+    //   };
+    //console.log("back set")
     window.addEventListener("keydown", keydownHandler, false );
     window.addEventListener("keydown", fireGoodshot, false);
     intervalTimer = window.setInterval( updatePositions, TIME_INTERVAL );
     intervalTimerBadShots = window.setInterval( fireBadShot, TIME_INTERVAL );
+    intervalBadSpaceSpeed = window.setInterval( speedUp, 5000 );
 
     document.addEventListener("keydown", function(event) {
       if (event.keyCode === 13) {
@@ -280,6 +305,7 @@ function stopTimer()
    window.removeEventListener("keydown", fireGoodshot, false );
    window.clearInterval( intervalTimer );
    window.clearInterval( intervalTimerBadShots );
+   window.clearInterval( intervalBadSpaceSpeed);
 } // end function stopTimer
 
 
@@ -288,6 +314,7 @@ function stopTimer()
 function resetElements()
 {
    life = 3;
+   speedUpRound = 0;
    var w = canvas.width;
    var h = canvas.height;
    canvasWidth = w; // store the width
@@ -315,7 +342,7 @@ function resetElements()
    badSpaceBeginning = h / 8; // distance from top 1/8 canvas height
    badSpaceEnd = h / 3; // distance from top 1/4 canvas height    
    pieceLength = (badSpaceEnd - badSpaceBeginning) / TARGET_PIECES;
-   initialbadSpacVelocity = -h / 4; // initial target speed multiplier
+   initialbadSpacVelocity = -h / 6; // initial target speed multiplier
    badSpace.start.x = badSpaceDistance;
    badSpace.start.y = badSpaceBeginning;
    badSpace.end.x = w - badSpaceDistance;
@@ -337,6 +364,15 @@ function resetElements()
 // reset all the screen elements and start a new game
 function newGame()
 {
+    const backgroundImage = new Image();
+    backgroundImage.src = 'https://raw.githubusercontent.com/Web-Development-Environments-2023/assignment2-318190253_206921116/main/clubIdmaintitle16_img.jpeg';
+    //context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+    console.log("drawn")
+
+    backgroundImage.onload = function() {
+        context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+      };
+
    resetElements(); // reinitialize all game elements
    stopTimer(); // terminate previous interval timer
 
@@ -434,6 +470,7 @@ function updatePositions()
               goodShotOnScreen=false;
               badSpacePiecesHit++;
               addscore(row);
+              targetSound.play();
             }
             }
         }
@@ -445,7 +482,7 @@ function updatePositions()
             {
                stopTimer(); // game over so stop the interval timer
                draw(); // draw the game pieces one final time
-               showGameOverDialog("You Won!"); // show winning dialog
+               showGameOverDialog("Champion!"); // show winning dialog
             }
 
    } // end if
@@ -455,8 +492,6 @@ function updatePositions()
         if (!badShot1.free && !badShot1.hit &&badShot1.y>= goodSpace.start.y){
             life--;
             badShot1.hit = true;
-            console.log("life is:")
-            console.log(life)
             gotostartpoint();
         }
     }
@@ -465,8 +500,6 @@ function updatePositions()
         if (!badShot2.free && !badShot2.hit && badShot2.y>= goodSpace.start.y){
             life--;
             badShot2.hit = true;
-            console.log("life is:")
-            console.log(life)
             gotostartpoint();
         }
     }
@@ -475,7 +508,7 @@ function updatePositions()
    if (life==0){
     stopTimer(); // game over so stop the interval timer
     draw(); // draw the game pieces one final time
-    showGameOverDialog("You Lost!"); // show winning dialog
+    showGameOverDialog("You Lost"); // show winning dialog
    }
 
    ++timerCount; // increment the timer event counter
@@ -494,13 +527,15 @@ function updatePositions()
    if (timeLeft <= 0)
    {
       stopTimer();
-      //showGameOverDialog("You lost"); // show the losing dialog
+      if (score < 100){ showGameOverDialog("you can do better")}
+      else{ showGameOverDialog("Winner!")}
    } // end if
 } // end function updatePositions
 
 // draws the game elements to the given Canvas
 function draw()
 {
+
    canvas.width = canvas.width; // clears the canvas (from W3C docs)
 
    // display time remaining
@@ -646,7 +681,7 @@ function keydownHandler(event) {
         goodShotOnScreen = true; // the cannonball is on the screen
         ++shotsFired; // increment shotsFired
         // play cannon fired sound
-        //cannonSound.play();
+        cannonSound.play();
 
      }
 }
@@ -697,6 +732,13 @@ function addscore(row){
 
 function showGameOverDialog(message)
 {
-   alert(message + "\nShots fired: " + shotsFired + 
+   alert(message + "\nFinal Score: " + score + 
       "\nTotal time: " + timeElapsed + " seconds ");
 } // end function showGameOverDialog
+
+function speedUp(){
+    if (speedUpRound < 4){
+        speedUpRound++;
+        badSpaceVelocity = 1.3*badSpaceVelocity;
+    }
+}
