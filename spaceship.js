@@ -4,6 +4,8 @@ var users={
 
 var page;
 
+var records;
+
 function showPage(pageId) {
     var pages = ['login', 'register','welcome', 'game', 'configuration'];
     for (var i = 0; i < pages.length; i++) {
@@ -124,6 +126,7 @@ function loginGame(){
         alert("Password is not correct.");
         return;   
     }
+    records = [];
     showPage('configuration')
 
 }
@@ -160,7 +163,11 @@ function doneConf() {
   if (chosenTime<2){
     alert("The minimum is 2 minuets");
   }
+  if (chosenTime != parseInt(chosenTime, 10)){
+    alert("Please insert the number of minutes");
+  }
   else{
+    document.getElementById('minutes').value = "";
     showPage('game')
   }
 }
@@ -222,6 +229,7 @@ var targetSound;
 var cannonSound;
 var goodSpaceHitSound;
 var backMusic;
+var draw_back;
 
 
 
@@ -273,6 +281,7 @@ function setupGame()
     cannonSound = document.getElementById( "cannonSound" );
     goodSpaceHitSound = document.getElementById( "goodSpaceHitSound" );
     backMusicSound = document.getElementById("backMusicSound");
+    draw_back = true;
 
 } // end function setupGame
 
@@ -281,7 +290,7 @@ function startTimer()
 {
     window.addEventListener("keydown", keydownHandler, false );
     window.addEventListener("keydown", fireGoodshot, false);
-    intervalTimer = window.setInterval( updatePositions, TIME_INTERVAL );
+    intervalTimer = window.setInterval( updatePositions, 10 );
     intervalTimerBadShots = window.setInterval( fireBadShot, TIME_INTERVAL );
     intervalBadSpaceSpeed = window.setInterval( speedUp, 5000 );
     intervalMusic = window.setInterval(backMusicSound.play(), 39000);
@@ -325,6 +334,7 @@ function resetElements()
    life = 3;
    backMusicSound.currentTime = 0;
    speedUpRound = 0;
+   draw_back =true;
    var w = canvas.width;
    var h = canvas.height;
    canvasWidth = w; // store the width
@@ -484,6 +494,7 @@ function updatePositions()
             {
                stopTimer(); // game over so stop the interval timer
                draw(); // draw the game pieces one final time
+               //showTable();
                showGameOverDialog("Champion!"); // show winning dialog
             }
 
@@ -511,6 +522,7 @@ function updatePositions()
    if (life==0){
     stopTimer(); // game over so stop the interval timer
     draw(); // draw the game pieces one final time
+    //showTable();
     showGameOverDialog("You Lost"); // show winning dialog
    }
 
@@ -530,8 +542,12 @@ function updatePositions()
    if (timeLeft <= 0)
    {
       stopTimer();
-      if (score < 100){ showGameOverDialog("you can do better")}
-      else{ showGameOverDialog("Winner!")}
+      if (score < 100){ 
+        //showTable();
+        showGameOverDialog("you can do better")}
+      else{ 
+        //showTable();
+        showGameOverDialog("Winner!")}
    } // end if
 } // end function updatePositions
 
@@ -540,16 +556,15 @@ function draw()
 {
 
     let backgroundImage = new Image();
-    backgroundImage.src = "https://raw.githubusercontent.com/Web-Development-Environments-2023/assignment2-318190253_206921116/main/clubIdmaintitle16_img.jpeg";
-    context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+    backgroundImage.src = "https://raw.githubusercontent.com/Web-Development-Environments-2023/assignment2-318190253_206921116/main/smallback.jpg";
   
-    // Clear the canvas
-    canvas.width = canvas.width;
+    // Draw the background image once it has loaded
+    backgroundImage.onload = function() {
+      context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
 
-   //canvas.width = canvas.width; // clears the canvas (from W3C docs)
 
    // display time remaining
-   context.fillStyle = "black";
+   context.fillStyle = "white";
    context.font = "bold 24px serif";
    context.textBaseline = "top";
    let minutes = Math.floor(timeLeft / 60);
@@ -558,13 +573,13 @@ function draw()
     context.fillText("Time remaining: " + timeString, 5, 5);
 
     // display th score
-    context.fillStyle = "black";
+    context.fillStyle = "white";
     context.font = "bold 24px serif";
     context.textBaseline = "top";
     context.fillText("Score: " + score, 250, 5);
 
     // display life
-    context.fillStyle = "black";
+    context.fillStyle = "white";
     context.font = "bold 24px serif";
     context.textBaseline = "top";
     context.fillText("lives: " + life, 350, 5);
@@ -572,7 +587,7 @@ function draw()
    // if a cannonball is currently on the screen, draw it
    if (goodShotOnScreen)
    { 
-      context.fillStyle = "gray";
+      context.fillStyle = "white";
       context.beginPath();
       context.arc(goodShot.x, goodShot.y, shotRadius, 0, Math.PI * 2);
       context.closePath();
@@ -580,7 +595,7 @@ function draw()
    } // end if
 
    if (!badShot1.free){
-    context.fillStyle = "black";
+    context.fillStyle = "orange";
     context.beginPath();
     context.arc(badShot1.x, badShot1.y, shotRadius, 0, Math.PI * 2);
     context.closePath();
@@ -588,7 +603,7 @@ function draw()
    }
 
    if (!badShot2.free){
-    context.fillStyle = "black";
+    context.fillStyle = "orange";
     context.beginPath();
     context.arc(badShot2.x, badShot2.y, shotRadius, 0, Math.PI * 2);
     context.closePath();
@@ -612,8 +627,8 @@ function draw()
     context.lineTo(badSpace.start.x, badSpace.end.y);
     context.closePath();
     context.lineWidth = 5;
-    context.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-    context.stroke()
+    context.fillStyle = 'rgba(0, 0, 0, 0)'; 
+    context.fill(); 
     
     const colors = ['red', 'green', 'blue', 'yellow'];
     for (let row = 0; row < 4; row++) {
@@ -643,7 +658,7 @@ function draw()
       }
     }
     
-} // end function draw
+}} // end function draw
 
 function keydownHandler(event) {
     moveDistance=10
@@ -752,3 +767,69 @@ function speedUp(){
         badSpaceVelocity = 1.3*badSpaceVelocity;
     }
 }
+
+
+const toggleButton = document.getElementById('toggleButton');
+const tableBody = document.querySelector('#recordTable tbody');
+
+// Function to update the table
+function updateTable() {
+  // Clear existing rows
+  tableBody.innerHTML = '';
+
+  // Create a row for each item in the records array
+  records.forEach((value, index) => {
+    const row = document.createElement('tr');
+    const indexCell = document.createElement('td');
+    const valueCell = document.createElement('td');
+
+    indexCell.textContent = index + 1;
+    valueCell.textContent = value;
+
+    row.appendChild(indexCell);
+    row.appendChild(valueCell);
+
+    tableBody.appendChild(row);
+  });
+}
+
+// Initially hide the table
+document.getElementById('recordTable').style.display = 'none';
+
+
+function showTable(){
+    records.push(score);
+    table.style.display = 'block';
+    updateTable();
+}
+
+// function createTable() {
+//     showTable();
+//     var tableBody = document.querySelector("#arrayTable tbody");
+//     for (let i = 0; i < records.length; i++) {
+//         var newRow = document.createElement("tr");
+//         var indexCell = document.createElement("td");
+//         var valueCell = document.createElement("td");
+//         indexCell.textContent = i + 1;
+//         valueCell.textContent = records[i];
+//         newRow.appendChild(indexCell);
+//         newRow.appendChild(valueCell);
+//         tableBody.appendChild(newRow);
+//     }
+// }
+
+// createTable();
+
+// function toggleTable() {
+//     var table = document.querySelector("#arrayTable");
+//     if (table.style.display === "none") {
+//         table.style.display = "table";
+//     } else {
+//         table.style.display = "none";
+//     }
+// }
+
+// function showTable() {
+//     var table = document.querySelector("#arrayTable");
+//     table.style.display = "table";
+//   }
