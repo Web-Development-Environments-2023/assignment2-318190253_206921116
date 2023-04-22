@@ -58,4 +58,20 @@
     bottom: 0;
     width: 100%;
     text-align: center;
+    color: lightgray;
+    font-family: 'Helvetica Neue', sans-serif;
  }
+
+ header {
+  text-align: center;
+  background-color: transparent;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: lightgray;
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 18px;
+}

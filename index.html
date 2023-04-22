@@ -6,6 +6,13 @@
       <title>Spaceship Game</title>
       <link rel="stylesheet" type="text/css" href="spaceship.css" />
       <script src = "spaceship.js"></script>
+      <style>
+         body {
+            background-image: url("https://raw.githubusercontent.com/Web-Development-Environments-2023/assignment2-318190253_206921116/main/generalback.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+         }
+      </style>
    </head>
    <body>
       <header>
@@ -29,61 +36,151 @@
         <a href="#" onclick="about()">About</a>
     </div>
    
-    <div id="welcome">
-        <h1>Welcome to our SpaceShip game!</h1>
-        <h3>Liel Caspi and Shira Sorek</h3>
-        <h4>318190253, 206921116</h4>
-        <button onclick="showPage('login')">Login</button>
-        <button onclick="showPage('register')">Register</button>
-    </div>
+    <style>
+      body {
+          background-color: black;
+      }
+      #welcome {
+          text-align: center;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          color: lightgray;
+          font-family: 'Helvetica', sans-serif;
+          font-size: 24px;
+      }
+      #welcome h1 {
+          font-size: 48px;
+      }
+      #welcome h3 {
+          font-size: 36px;
+      }
+      #welcome h4 {
+          font-size: 18px;
+      }
+      button {
+          margin: 10px;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 5px;
+          background-color: #4CAF50;
+          color: white;
+          font-family: 'Helvetica', sans-serif;
+          font-size: 18px;
+          cursor: pointer;
+      }
 
-    <div id="login" style="display:none">
-        <h2>Login To Play!</h2>
+      #login h2{
+         color: lightgray;
+          font-family: 'Helvetica', sans-serif;
+      }
 
-        <label for="reg_username">Username:</label>
-        <input type="text" id="reg_username" required>
-        <br><br>
+      #register h2{
+         color: lightgray;
+          font-family: 'Helvetica', sans-serif;
+      }
 
-        <label for="reg_password">Password:</label>
-        <input type="password" id="reg_password" required>
-        <br><br>
+      input[type="button"] {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    font-family: 'Helvetica', sans-serif;
+    font-size: 18px;
+    cursor: pointer;
+  }
 
-        <!-- <button onclick="loginGame()">Login To Game</button>   -->
-        <p><input id = "login" type = "button" value = "Login To Game" onclick="loginGame()">
-    </div>
-    
-    <div id="register" style="display:none">
+  #configuration {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+  }
+  
+  #configuration * {
+    margin: 10px;
+  }
+
+  #configuration h1{
+   color: lightgray;
+          font-family: 'Helvetica', sans-serif;
+  }
+
+  #configuration h3{
+   color: lightgray;
+          font-family: 'Helvetica', sans-serif;
+  }
+  </style>
+  
+  <div id="welcome">
+      <h1>Welcome to our SpaceShip game!</h1>
+      <h3>Liel Caspi and Shira Sorek</h3>
+      <h4>318190253, 206921116</h4>
+      <button onclick="showPage('login')">Login</button>
+      <button onclick="showPage('register')">Register</button>
+  </div>
+
+  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+   <div id="login" style="display:none; justify-content: center; align-items: center; flex-direction: column;">
+     <h2>Login To Play!</h2>
+ 
+     <label for="reg_username" style="color: lightgray; font-family:  'Helvetica', sans-serif;">Username:</label>
+     <input type="text" id="reg_username" required>
+     <br><br>
+ 
+     <label for="reg_password" style="color: lightgray; font-family:  'Helvetica', sans-serif;">Password:</label>
+     <input type="password" id="reg_password" required>
+     <br><br>
+ 
+     <p><input id="login" type="button" value="Login To Game" onclick="loginGame()"></p>
+   </div>
+ </div>
+ 
+ 
+ <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <div id="register" style="display:none; justify-content: center; align-items: center; flex-direction: column;">
         <h2>We Are So Glad You Decided To Join!</h2>
 
-        <label for="username">Username:</label>
+        <label for="username" style="color: lightgray; font-family:  'Helvetica', sans-serif;">Username:</label>
         <input type="text" id="username" name="username" required>
         <br><br>
         
-        <label for="password">Password:</label>
+        <label for="password" style="color: lightgray; font-family:  'Helvetica', sans-serif;">Password:</label>
         <input type="password" id="password" name="password" required>
         <br><br>
 
-        <label for="confirm-password">Confirm Password:</label>
+        <label for="confirm-password" style="color: lightgray; font-family:  'Helvetica', sans-serif;">Confirm Password:</label>
         <input type="password" id="confirm-password" name="confirm-password" required>
         <br><br>
 
-        <label for="name">Name:</label>
+        <label for="name" style="color: lightgray; font-family:  'Helvetica', sans-serif;">Name:</label>
         <input type="text" id="name" name="name" required>
         <br><br>
 
-        <label for="last-name">Last Name:</label>
+        <label for="last-name" style="color: lightgray; font-family:  'Helvetica', sans-serif;">Last Name:</label>
         <input type="text" id="last-name" name="last-name" required>
         <br><br>
 
-        <label for="email">Email:</label>
+        <label for="email" style="color: lightgray; font-family:  'Helvetica', sans-serif;">Email:</label>
         <input type="email" id="email" name="email" required>
         <br><br>
 
-        <label for="birthdate">Birthdate:</label>
+        <label for="birthdate" style="color: lightgray; font-family:  'Helvetica', sans-serif;">Birthdate:</label>
         <input type="date" id="birthdate" name="birthdate">            
         <br><br>
         <button onclick="checkValidation()">Submit</button> 
     </div>
+   </div>
+
 
     <!-- The Modal -->
     <div id="about" class="modal">
@@ -97,11 +194,14 @@
     <div id="configuration" style="display:none" >
         <h1>This Is The Configuration Page</h1>
         <h3>You can choose how you want to play!</h3>
-        <p id="message">First, press a key that you would like to fire with ! </p>
-        <label for="minutes" style="display:none" >Now, enter the amount of minutes you would like to play:</label>
-        <input style="display:none" type="text" id="minutes" name="minutes" required>
         <br>
-        <button style="display:none" id="start" onclick="doneConf()">Let's start</button> 
+        <br>
+
+        <p id="message" style="color: lightgray; font-size: 20px; font-family: Helvetica, sans-serif;">First, press a key that you would like to fire with!</p>
+        <label for="minutes" style="display:none; font-size: 20px; color: lightgray; font-family:  'Helvetica', sans-serif;" >Now, enter the amount of minutes you would like to play:</label>
+        <input style="display:none; margin: 0 auto;" type="text" id="minutes" name="minutes" required>
+        <br>
+        <button style="display:none; margin: 0 auto;" id="start" onclick="doneConf()">Let's start</button> 
     </div>
 
     <!-- <div id="records" style="display:none" >
@@ -127,7 +227,8 @@
 
   <style>
     #theCanvas {
-        border: 2px solid black;
+        margin: 0 auto;
+        display: block;
     }
   </style>
 
