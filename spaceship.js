@@ -181,6 +181,7 @@ var life = 3;
 var intervalTimer; // holds interval timer
 var intervalTimerBadShots;
 var intervalBadSpaceSpeed; // interval timer for bad space ships speed
+var intervalMusic;
 var timerCount; // number of times the timer fired since the last second
 var timeLeft; // the amount of time left in seconds
 var shotsFired; // the number of shots the user has fired
@@ -219,13 +220,10 @@ var speedUpRound = 0;
 
 var targetSound;
 var cannonSound;
+var goodSpaceHitSound;
+var backMusic;
 
 
-
-// // variables for sounds
-// var targetSound;
-// var cannonSound;
-// var blockerSound;
 
 window.addEventListener("load", setupGame, false);
 
@@ -241,15 +239,6 @@ function setupGame()
    // start a new game when user clicks Start Game button
    document.getElementById( "startButton" ).addEventListener( 
       "click", newGame, false );
-
-    // const backgroundImage = new Image();
-    // backgroundImage.src = 'https://raw.githubusercontent.com/Web-Development-Environments-2023/assignment2-318190253_206921116/main/backround.jpeg';
-    // console.log("show back")
-    // //backgroundImage.src = 'https://github.com/Web-Development-Environments-2023/assignment2-318190253_206921116/blob/main/backround.jpeg';
-
-    // backgroundImage.onload = function() {
-    //     context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-    //   };
       
 
    // JavaScript Object representing game items
@@ -282,26 +271,20 @@ function setupGame()
    // get sounds
     targetSound = document.getElementById( "targetSound" );
     cannonSound = document.getElementById( "cannonSound" );
-//    blockerSound = document.getElementById( "blockerSound" );
+    goodSpaceHitSound = document.getElementById( "goodSpaceHitSound" );
+    backMusicSound = document.getElementById("backMusicSound");
+
 } // end function setupGame
 
 // set up interval timer to update game
 function startTimer()
 {
-    // const backgroundImage = new Image();
-    // backgroundImage.src = 'https://raw.githubusercontent.com/Web-Development-Environments-2023/assignment2-318190253_206921116/main/backround.jpeg';
-    // //console.log("show back")
-    // //backgroundImage.src = 'https://github.com/Web-Development-Environments-2023/assignment2-318190253_206921116/blob/main/backround.jpeg';
-
-    // backgroundImage.onload = function() {
-    //     context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-    //   };
-    //console.log("back set")
     window.addEventListener("keydown", keydownHandler, false );
     window.addEventListener("keydown", fireGoodshot, false);
     intervalTimer = window.setInterval( updatePositions, TIME_INTERVAL );
     intervalTimerBadShots = window.setInterval( fireBadShot, TIME_INTERVAL );
     intervalBadSpaceSpeed = window.setInterval( speedUp, 5000 );
+    intervalMusic = window.setInterval(backMusicSound.play(), 39000);
 
     document.addEventListener("keydown", function(event) {
       if (event.keyCode === 13) {
@@ -314,6 +297,7 @@ function startTimer()
     event.preventDefault(); // prevent default action
   }
     }, false);
+    //////////////////
 
 
 
@@ -327,7 +311,11 @@ function stopTimer()
    window.clearInterval( intervalTimer );
    window.clearInterval( intervalTimerBadShots );
    window.clearInterval( intervalBadSpaceSpeed);
+   window.clearInterval(intervalMusic);
+   backMusicSound.pause();
+
 } // end function stopTimer
+
 
 
 // called by function newGame to scale the size of the game elements
@@ -335,6 +323,7 @@ function stopTimer()
 function resetElements()
 {
    life = 3;
+   backMusicSound.currentTime = 0;
    speedUpRound = 0;
    var w = canvas.width;
    var h = canvas.height;
@@ -385,14 +374,6 @@ function resetElements()
 // reset all the screen elements and start a new game
 function newGame()
 {
-    const backgroundImage = new Image();
-    backgroundImage.src = 'https://raw.githubusercontent.com/Web-Development-Environments-2023/assignment2-318190253_206921116/main/clubIdmaintitle16_img.jpeg';
-    //context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-    console.log("drawn")
-
-    backgroundImage.onload = function() {
-        context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-      };
 
    resetElements(); // reinitialize all game elements
    stopTimer(); // terminate previous interval timer
@@ -513,6 +494,7 @@ function updatePositions()
         if (!badShot1.free && !badShot1.hit &&badShot1.y>= goodSpace.start.y){
             life--;
             badShot1.hit = true;
+            goodSpaceHitSound.play();
             gotostartpoint();
         }
     }
@@ -557,7 +539,14 @@ function updatePositions()
 function draw()
 {
 
-   canvas.width = canvas.width; // clears the canvas (from W3C docs)
+    let backgroundImage = new Image();
+    backgroundImage.src = "https://raw.githubusercontent.com/Web-Development-Environments-2023/assignment2-318190253_206921116/main/clubIdmaintitle16_img.jpeg";
+    context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+  
+    // Clear the canvas
+    canvas.width = canvas.width;
+
+   //canvas.width = canvas.width; // clears the canvas (from W3C docs)
 
    // display time remaining
    context.fillStyle = "black";
