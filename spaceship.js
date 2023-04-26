@@ -331,6 +331,7 @@ function stopTimer()
 // relative to the size of the canvas before the game begins
 function resetElements()
 {
+   document.getElementById("my-table").style.display = "none";
    life = 3;
    backMusicSound.currentTime = 0;
    speedUpRound = 0;
@@ -492,9 +493,9 @@ function updatePositions()
 
     if (badSpacePiecesHit == 20)
             {
+               showTable();
                stopTimer(); // game over so stop the interval timer
                draw(); // draw the game pieces one final time
-               //showTable();
                showGameOverDialog("Champion!"); // show winning dialog
             }
 
@@ -505,6 +506,7 @@ function updatePositions()
         if (!badShot1.free && !badShot1.hit &&badShot1.y>= goodSpace.start.y){
             life--;
             badShot1.hit = true;
+            badShot1.free = true;
             goodSpaceHitSound.play();
             gotostartpoint();
         }
@@ -514,15 +516,16 @@ function updatePositions()
         if (!badShot2.free && !badShot2.hit && badShot2.y>= goodSpace.start.y){
             life--;
             badShot2.hit = true;
+            badShot2.free = true;
             gotostartpoint();
         }
     }
 
 
    if (life==0){
+    showTable();
     stopTimer(); // game over so stop the interval timer
     draw(); // draw the game pieces one final time
-    //showTable();
     showGameOverDialog("You Lost"); // show winning dialog
    }
 
@@ -543,10 +546,10 @@ function updatePositions()
    {
       stopTimer();
       if (score < 100){ 
-        //showTable();
+        showTable();
         showGameOverDialog("you can do better")}
       else{ 
-        //showTable();
+        showTable();
         showGameOverDialog("Winner!")}
    } // end if
 } // end function updatePositions
@@ -769,67 +772,40 @@ function speedUp(){
 }
 
 
-const toggleButton = document.getElementById('toggleButton');
-const tableBody = document.querySelector('#recordTable tbody');
 
-// Function to update the table
-function updateTable() {
-  // Clear existing rows
-  tableBody.innerHTML = '';
-
-  // Create a row for each item in the records array
-  records.forEach((value, index) => {
-    const row = document.createElement('tr');
-    const indexCell = document.createElement('td');
-    const valueCell = document.createElement('td');
-
-    indexCell.textContent = index + 1;
-    valueCell.textContent = value;
-
-    row.appendChild(indexCell);
-    row.appendChild(valueCell);
-
-    tableBody.appendChild(row);
-  });
-}
 
 // Initially hide the table
-document.getElementById('recordTable').style.display = 'none';
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("my-table").style.display = "none";
+    let table = document.getElementById("my-table");});
 
 
 function showTable(){
     records.push(score);
-    table.style.display = 'block';
-    updateTable();
+    records.sort(function(a, b) {
+        return a - b;
+      });
+    records.reverse();
+    let table = document.getElementById("my-table");
+    for (var i = table.rows.length - 1; i > 0; i--) {
+        table.deleteRow(i);
+    }
+    document.getElementById("my-table").style.display = "table";
+    for (var i=0; i < records.length; i++){
+        let newRow = table.insertRow();
+
+        let indexCell = newRow.insertCell();
+        indexCell.innerText = i+1;
+        
+        let valueCell = newRow.insertCell();
+        valueCell.innerText = records[i];
+        if (records[i]==score){
+            newRow.style.backgroundColor = "pink";
+            indexCell.style.color = "gray";
+            valueCell.style.color = "gray";
+            }
+        
+    }
+    console.log("done with table");
 }
 
-// function createTable() {
-//     showTable();
-//     var tableBody = document.querySelector("#arrayTable tbody");
-//     for (let i = 0; i < records.length; i++) {
-//         var newRow = document.createElement("tr");
-//         var indexCell = document.createElement("td");
-//         var valueCell = document.createElement("td");
-//         indexCell.textContent = i + 1;
-//         valueCell.textContent = records[i];
-//         newRow.appendChild(indexCell);
-//         newRow.appendChild(valueCell);
-//         tableBody.appendChild(newRow);
-//     }
-// }
-
-// createTable();
-
-// function toggleTable() {
-//     var table = document.querySelector("#arrayTable");
-//     if (table.style.display === "none") {
-//         table.style.display = "table";
-//     } else {
-//         table.style.display = "none";
-//     }
-// }
-
-// function showTable() {
-//     var table = document.querySelector("#arrayTable");
-//     table.style.display = "table";
-//   }
