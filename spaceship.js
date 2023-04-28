@@ -11,6 +11,7 @@ function showPage(pageId) {
     for (var i = 0; i < pages.length; i++) {
         page = document.getElementById(pages[i]);
         if (pageId=='configuration'){
+            console.log("listner on");
           document.addEventListener("keydown", Message ,false);}
         if (pages[i] === pageId) {
             page.style.display = 'block';
@@ -152,6 +153,7 @@ function Message(event) {
         start.style.display = 'block';
       }
       document.removeEventListener("keydown", Message, false);
+      console.log("listner off");
   } else {
     alert("Please choose a key that is either the space bar or one of the letters");
     return; 

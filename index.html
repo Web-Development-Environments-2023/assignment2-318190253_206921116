@@ -71,7 +71,9 @@
          <source src = "goodSpace_hit.ogg" type = "audio/ogg"></audio>
       <audio id = "backMusicSound" preload = "auto">
          <source src = "backroundMusic.ogg" type = "audio/ogg"></audio>
-   <div id="menu">
+
+   
+   <div id="menu" >
         <a href="#" onclick="showPage('register')">Register</a>|
         <a href="#" onclick="showPage('login')">Login</a> |
         <a href="#" onclick="about()">About</a>
@@ -123,6 +125,20 @@
           font-family: 'Helvetica', sans-serif;
           font-size: 18px;
           cursor: pointer;
+      }
+
+      a {
+          margin: 10px;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 5px;
+          background-color: #4CAF50;
+          color: white;
+          font-family: 'Helvetica', sans-serif;
+          font-size: 18px;
+          cursor: pointer;
+          text-decoration: none;
+
       }
 
       #login h2{
@@ -179,8 +195,7 @@
       <h1>Welcome to our SpaceShip game!</h1>
       <h3>Liel Caspi and Shira Sorek</h3>
       <h4>318190253, 206921116</h4>
-      <button onclick="showPage('login')">Login</button>
-      <button onclick="showPage('register')">Register</button>
+
   </div>
 
   <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
@@ -237,11 +252,31 @@
 
 
     <!-- The Modal -->
+    <style>
+      .modal-content {
+          font-size: 24px;
+          font-family: 'Helvetica', sans-serif;
+      }
+  </style>
     <div id="about" class="modal">
     <!-- Modal content -->
     <div class="modal-content">
         <span class="close">&times;</span>
-        <p>Shira Sorek & Liel Caspi. We encountered a few diffuclties in the assignment. When creating the elements to represent the bad spaceships, we debated wether to create 20 individual elements or one the contiand all the others. We decided to create one, so the the movements as a group would be easier to implement. Another challange was the detection of collisions - between a shot from the good spaceship to the bad ones, and from the bad ones towards the good spceships.</p>
+        <p>Shira Sorek & Liel Caspi.
+         <br>
+         <br>
+         Game Instructions: you can move right, left, up and down using the arrows. Use your selected fire key in order to shoot towards the bad spaceships in front of you. Your goal is to hit all the spaceships before your time's up! Be careful of shots towards you.
+         <br>
+         <br>
+         We encountered a few diffuclties in the assignment. When creating the elements to represent the bad spaceships, we debated wether to create 20 individual elements or one the contiand all the others. We decided to create one, so the the movements as a group would be easier to implement. Another challange was the detection of collisions - between a shot from the good spaceship to the bad ones, and from the bad ones towards the good spceships.
+         <br>
+         Notice you have a timer with the amount of time left, as well as lives and current score.
+         <br>
+         We did not use template or jQuery Plugin.
+         <br>
+         <br>
+         Enjoy!
+      </p>
     </div>
     </div>
 
@@ -258,26 +293,6 @@
         <button style="display:none; margin: 0 auto;" id="start" onclick="doneConf()">Let's start</button> 
     </div>
 
-    <!-- <div id="records" style="display:none" >
-      <table id="myTable">
-         <thead>
-           <tr>
-             <th>Place</th>
-             <th>Score</th>
-           </tr>
-         </thead>
-         <tbody>
-           <tr>
-             <td id="cell1"></td>
-             <td id="cell2"></td>
-           </tr>
-           <tr>
-             <td id="cell3"></td>
-             <td id="cell4"></td>
-           </tr>
-         </tbody>
-       </table>
-   </div> -->
 
   <style>
     #theCanvas {
