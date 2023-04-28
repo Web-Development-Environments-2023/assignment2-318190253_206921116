@@ -1,4 +1,5 @@
 liel's and shira's AWESOME GAME!
 
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-718a45dd9cf7e7f842a935f5ebbe5719a5e09af4491e668f4dbf3b35d5cca122.svg)](https://classroom.github.com/online_ide?assignment_repo_id=10881482&assignment_repo_type=AssignmentRepo)
+ID: 206921116, 318190253
 
+link to our game:https://web-development-environments-2023.github.io/assignment2-318190253_206921116/
