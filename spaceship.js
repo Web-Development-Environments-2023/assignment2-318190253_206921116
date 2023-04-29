@@ -3,18 +3,20 @@ var users={
 };
 
 var page;
-
 var records;
+var ifConf=false;
 
 function showPage(pageId) {
     var pages = ['login', 'register','welcome', 'game', 'configuration'];
     for (var i = 0; i < pages.length; i++) {
         page = document.getElementById(pages[i]);
-        if (pageId=='configuration'){
-            console.log("listner on");
-          document.addEventListener("keydown", Message ,false);}
         if (pages[i] === pageId) {
             page.style.display = 'block';
+            if (pageId=='configuration'){
+              if(ifConf){
+                resetConf();}
+              console.log("listner on");
+              document.addEventListener("keydown", Message ,false);}
         } else {
             page.style.display = 'none';
         }
@@ -76,27 +78,27 @@ function checkValidation()
         return;
         }
 
-        if (!areNamesValid(document.getElementById("last-name").value)) {
-        alert("Please enter a valid last name.");
-        return;
-        }
+    if (!areNamesValid(document.getElementById("last-name").value)) {
+      alert("Please enter a valid last name.");
+      return;
+      }
 
-        if (!isEmailValid(document.getElementById("email").value)) {
-        alert("Please enter a valid email address.");
-        return;
-        }
+    if (!isEmailValid(document.getElementById("email").value)) {
+      alert("Please enter a valid email address.");
+      return;
+      }
 
-        if (!isPassValid(document.getElementById("password").value)) {
-        alert("Please enter a valid password with at least 1 letter character and at least 1 digit character.");
-        return;
-        }
+    if (!isPassValid(document.getElementById("password").value)) {
+      alert("Please enter a valid password with at least 1 letter character and at least 1 digit character.");
+      return;
+      }
 
-        if (!arePassSame(document.getElementById("confirm-password").value, document.getElementById("password").value)) {
-        alert("Please make sure your passwords match.");
-        return;
-        }
+    if (!arePassSame(document.getElementById("confirm-password").value, document.getElementById("password").value)) {
+      alert("Please make sure your passwords match.");
+      return;
+      }
 
-        users[document.getElementById("username").value] = document.getElementById("password").value;
+      users[document.getElementById("username").value] = document.getElementById("password").value;
 
 
 
@@ -109,9 +111,6 @@ function checkValidation()
     document.getElementById("confirm-password").value="";
     document.getElementById("birthdate").value="";
 
-
-
-
 }
 
 function loginGame(){
@@ -119,6 +118,10 @@ function loginGame(){
     document.getElementById("reg_username").value = "";
     password=document.getElementById("reg_password").value
     document.getElementById("reg_password").value = "";
+    if (username == "" || password== "" ){
+      alert("Please fill all fields.");
+      return;
+    }
     if (!(username in users)) {
         alert("The username you entered dosent exist.");
         return; 
@@ -129,7 +132,6 @@ function loginGame(){
     }
     records = [];
     showPage('configuration')
-
 }
 
 
@@ -138,11 +140,11 @@ var chosenShootingKey;
 var chosenTime;
 
 function Message(event) {
+  ifConf=true;
   if (event.keyCode == 32 || // space bar
     (event.keyCode >= 65 && event.keyCode <= 90)) { // letters A-Z
       // update the shooting key variable
       chosenShootingKey = event.keyCode;
-      message = document.getElementById("message");
       if (message) {
         message.style.display = "none";
         const label = document.querySelector('label[for="minutes"]');
@@ -160,13 +162,26 @@ function Message(event) {
   }
 }
 
+function resetConf(){
+  message = document.getElementById("message");
+  message.style.display = 'block';
+  const label = document.querySelector('label[for="minutes"]');
+  const input = document.getElementById('minutes');
+  const start = document.getElementById('start');
+  label.style.display = 'none';
+  input.style.display = 'none';
+  start.style.display = 'none';
+}
+
 function doneConf() {
   chosenTime = document.getElementById('minutes').value;
   if (chosenTime<2){
     alert("The minimum is 2 minuets");
+    return; 
   }
   if (chosenTime != parseInt(chosenTime, 10)){
     alert("Please insert the number of minutes");
+    return; 
   }
   else{
     document.getElementById('minutes').value = "";
@@ -297,18 +312,27 @@ function startTimer()
     intervalBadSpaceSpeed = window.setInterval( speedUp, 5000 );
     intervalMusic = window.setInterval(backMusicSound.play(), 39000);
 
+
+    //dont do nothing if i press enter
     document.addEventListener("keydown", function(event) {
       if (event.keyCode === 13) {
-        event.preventDefault();
+        event.preventDefault(); // prevent default action
       }
     });
-
+    //dont do nothing if i press space
     window.addEventListener("keyup", function(event) {
-      if (event.keyCode == 32) { // spacebar released
+      if (event.keyCode == 32) { 
     event.preventDefault(); // prevent default action
   }
     }, false);
-    //////////////////
+
+    //stopping the game if one of this 2 buttons are pressed
+    const menuDiv = document.getElementById("menu");
+    const registerLink = menuDiv.getElementsByTagName("a")[0];
+    const loginLink = menuDiv.getElementsByTagName("a")[1];
+
+    loginLink.addEventListener("click", stopTimer);
+    registerLink.addEventListener("click", stopTimer);
 
 
 
@@ -464,11 +488,8 @@ function updatePositions()
 
    if (goodShotOnScreen) // if there is currently a shot fired
    {
-
-      // update cannonball position
+      // update position
       var interval = TIME_INTERVAL / 1000.0;
-        
-      //goodShot.x -= interval * shotSpeed;
       goodShot.y -= interval * shotSpeed;
 
       if (goodShot.y < 0){
@@ -491,7 +512,6 @@ function updatePositions()
         }
       }
       }
-
 
     if (badSpacePiecesHit == 20)
             {
@@ -519,6 +539,7 @@ function updatePositions()
             life--;
             badShot2.hit = true;
             badShot2.free = true;
+            goodSpaceHitSound.play();
             gotostartpoint();
         }
     }

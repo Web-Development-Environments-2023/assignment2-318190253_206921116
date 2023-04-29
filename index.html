@@ -285,8 +285,7 @@
         <h3>You can choose how you want to play!</h3>
         <br>
         <br>
-
-        <p id="message" style="color: lightgray; font-size: 20px; font-family: Helvetica, sans-serif;">First, press a key that you would like to fire with!</p>
+        <p id="message" style="display:block; color: lightgray; font-size: 20px; font-family: Helvetica, sans-serif;">First, press a key that you would like to fire with!</p>
         <label for="minutes" style="display:none; font-size: 20px; color: lightgray; font-family:  'Helvetica', sans-serif;" >Now, enter the amount of minutes you would like to play:</label>
         <input style="display:none; margin: 0 auto;" type="text" id="minutes" name="minutes" required>
         <br>
@@ -303,7 +302,7 @@
 
     <div id="game" style="display:none" >
         <canvas id = "theCanvas" width = "600" height = "600"></canvas> 
-        <p><input id = "startButton" type = "button" value = "Start Game" style="position:fixed; bottom:20%; left:50%; transform:translateX(-50%);">
+        <p><input id = "startButton" type = "button" value = "Start Game" style="z-index: 1; position:fixed; bottom:10%; left:82%; transform:translateX(-50%);">
     </div>
    <footer>
       <p>Shira Sorek: soreksha@post.bgu.ac, Liel Caspi: lielca@post.bgu.ac.il</p>

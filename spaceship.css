@@ -6,6 +6,7 @@
     
     left: 0;
     top: 0;
+    z-index: 2;
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
