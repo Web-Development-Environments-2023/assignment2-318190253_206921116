@@ -1,5 +1,5 @@
 var users={
-    "p": "p",
+    "p": "testuser",
 };
 
 var page;
